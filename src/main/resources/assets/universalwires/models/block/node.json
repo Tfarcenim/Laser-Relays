@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench",
+	"parent" : "block/block",
+	"textures": {
+		"2": "universalwires:block/red_node",
+		"particle": "universalwires:block/green_node"
+	},
+	"elements": [
+		{
+			"from": [3, 0, 11],
+			"to": [5, 9, 13],
+			"faces": {
+				"north": {"uv": [7, 6, 9, 15], "texture": "#2"},
+				"east": {"uv": [7, 6, 9, 15], "texture": "#2"},
+				"south": {"uv": [7, 6, 9, 15], "texture": "#2"},
+				"west": {"uv": [7, 6, 9, 15], "texture": "#2"},
+				"up": {"uv": [7, 6, 9, 8], "texture": "#2"},
+				"down": {"uv": [7, 14, 9, 16], "texture": "#2"}
+			}
+		}
+	]
+}

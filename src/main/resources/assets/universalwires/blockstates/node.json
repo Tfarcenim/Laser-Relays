@@ -1,0 +1,304 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "item": "true",
+        "facing": "up"
+      },
+      "apply": {
+        "model": "universalwires:block/item_node",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "fluid": "true",
+        "facing": "up"
+
+      },
+      "apply": {
+        "model": "universalwires:block/fluid_node",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "energy": "true",
+        "facing": "up"
+
+      },
+      "apply": {
+        "model": "universalwires:block/energy_node",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "gas": "true",
+        "facing": "up"
+      },
+      "apply": {
+        "model": "universalwires:block/gas_node",
+        "uvlock": false
+      }
+    },
+
+    {
+      "when": {
+        "item": "true",
+        "facing": "up"
+      },
+      "apply": {
+        "model": "universalwires:block/item_node",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "fluid": "true",
+        "facing": "up"
+
+      },
+      "apply": {
+        "model": "universalwires:block/fluid_node",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "energy": "true",
+        "facing": "up"
+
+      },
+      "apply": {
+        "model": "universalwires:block/energy_node",
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "gas": "true",
+        "facing": "up"
+      },
+      "apply": {
+        "model": "universalwires:block/gas_node",
+        "uvlock": false
+      }
+    },
+
+    {
+      "when": {
+        "item": "true",
+        "facing": "down"
+      },
+      "apply": {
+        "model": "universalwires:block/item_node","x": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "fluid": "true",
+        "facing": "down"
+
+      },
+      "apply": {
+        "model": "universalwires:block/fluid_node","x": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "energy": "true",
+        "facing": "down"
+
+      },
+      "apply": {
+        "model": "universalwires:block/energy_node","x": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "gas": "true",
+        "facing": "down"
+      },
+      "apply": {
+        "model": "universalwires:block/gas_node","x": 180,
+        "uvlock": false
+      }
+    },
+
+    {
+      "when": {
+        "item": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "universalwires:block/item_node","x": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "fluid": "true",
+        "facing": "north"
+
+      },
+      "apply": {
+        "model": "universalwires:block/fluid_node","x": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "energy": "true",
+        "facing": "north"
+
+      },
+      "apply": {
+        "model": "universalwires:block/energy_node","x": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "gas": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "universalwires:block/gas_node","x": 90,
+        "uvlock": false
+      }
+    },
+
+    {
+      "when": {
+        "item": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "universalwires:block/item_node","x": 90, "y": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "fluid": "true",
+        "facing": "south"
+
+      },
+      "apply": {
+        "model": "universalwires:block/fluid_node","x": 90, "y": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "energy": "true",
+        "facing": "south"
+
+      },
+      "apply": {
+        "model": "universalwires:block/energy_node","x": 90, "y": 180,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "gas": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "universalwires:block/gas_node","x": 90, "y": 180,
+        "uvlock": false
+      }
+    },
+
+    {
+      "when": {
+        "item": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "universalwires:block/item_node", "x": 90, "y": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "fluid": "true",
+        "facing": "east"
+
+      },
+      "apply": {
+        "model": "universalwires:block/fluid_node", "x": 90, "y": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "energy": "true",
+        "facing": "east"
+
+      },
+      "apply": {
+        "model": "universalwires:block/energy_node", "x": 90, "y": 90,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "gas": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "universalwires:block/gas_node", "x": 90, "y": 90,
+        "uvlock": false
+      }
+    },
+
+    {
+      "when": {
+        "item": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "universalwires:block/item_node","x": 90, "y" : 270,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "fluid": "true",
+        "facing": "west"
+
+      },
+      "apply": {
+        "model": "universalwires:block/fluid_node","x": 90, "y" : 270,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "energy": "true",
+        "facing": "west"
+
+      },
+      "apply": {
+        "model": "universalwires:block/energy_node","x": 90, "y" : 270,
+        "uvlock": false
+      }
+    },
+    {
+      "when": {
+        "gas": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "universalwires:block/gas_node","x": 90, "y" : 270,
+        "uvlock": false
+      }
+    }
+  ]
+}
