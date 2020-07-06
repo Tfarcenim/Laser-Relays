@@ -1,5 +1,6 @@
 package tfar.laserrelays;
 
+import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -53,6 +54,7 @@ public class NodeBlock extends Block {
 	public static final BooleanProperty ENERGY = BooleanProperty.create("energy");
 	public static final BooleanProperty GAS = BooleanProperty.create("gas");
 
+	public static final List<BooleanProperty> props = Lists.newArrayList(ITEM,FLUID,ENERGY,ITEM);
 
 	public NodeBlock(Properties properties) {
 		super(properties);
@@ -164,16 +166,38 @@ public class NodeBlock extends Block {
 
 	@Override
 	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		NodeBlockEntity be = (NodeBlockEntity)worldIn.getTileEntity(pos);
+		NodeBlockEntity thisNode = (NodeBlockEntity)worldIn.getTileEntity(pos);
+		//block is gone
 		if (newState.getBlock() != state.getBlock()) {
-			if (false) {
-				BlockPos otherPos = null;
-				NodeBlockEntity other = (NodeBlockEntity) worldIn.getTileEntity(otherPos);
-				BlockState otherState = worldIn.getBlockState(otherPos);
-				other.disconnect();
+			for (NodeType nodeType : NodeType.values()) {
+				for (BlockPos otherPos : thisNode.connections.get(nodeType)) {
+					NodeBlockEntity otherNode = (NodeBlockEntity) worldIn.getTileEntity(otherPos);
+					otherNode.disconnect(pos, nodeType);
+				}
+			}
+		}
+		//nodes changed
+		else if (newState != state) {
+			if (isBreak(state,newState)) {
+				NodeType nodeType = getBreak(state,newState);
+					for (BlockPos otherPos : thisNode.connections.get(nodeType)) {
+						NodeBlockEntity otherNode = (NodeBlockEntity) worldIn.getTileEntity(otherPos);
+						otherNode.disconnect(pos, nodeType);
+						thisNode.disconnectNode(nodeType);
+				}
 			}
 		}
 		super.onReplaced(state, worldIn, pos, newState, isMoving);
+	}
+
+	public boolean isBreak(BlockState old, BlockState newState) {
+		return props.stream().anyMatch(bool -> old.get(bool) && !newState.get(bool));
+	}
+
+	public NodeType getBreak(BlockState old, BlockState newState) {
+		return props.stream().filter(property -> old.get(property) && !newState.get(property)).findFirst()
+						.map(property -> NodeType.valueOf(property.getName().toUpperCase()))
+						.orElseThrow(IllegalStateException::new);
 	}
 
 	@Override

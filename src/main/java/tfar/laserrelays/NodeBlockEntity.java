@@ -41,17 +41,25 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 		}
 	}
 
-	public void connect(BlockPos other, NodeType nodeType) {
-		connections.get(nodeType).add(other);
-		markDirty();
+	public void connect(BlockPos other, NodeType node) {
+		if (!connections.get(node).contains(other)) {
+			connections.get(node).add(other);
+			markDirty();
+		}
 	}
 
-	public void disconnect() {
-		markDirty();
+	public void disconnect(BlockPos other,NodeType node) {
+		if (connections.get(node).contains(other)) {
+			connections.get(node).remove(other);
+			markDirty();
+		}
 	}
 
-	public Set<BlockPos> getConnections(NodeType type) {
-		return connections.get(type);
+	public void disconnectNode(NodeType node) {
+		if (!connections.get(node).isEmpty()) {
+			connections.get(node).clear();
+			markDirty();
+		}
 	}
 
 	@Override
@@ -59,6 +67,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 		super.func_230337_a_(state,compound);
 		CompoundNBT nbt = compound.getCompound(NBTUtil.CONNECTIONS);
 		for (NodeType nodeType : NodeType.values()) {
+			connections.get(nodeType).clear();
 			ListNBT listNBT = nbt.getList(nodeType.toString(), Constants.NBT.TAG_COMPOUND);
 			Set<BlockPos> blockPosSet = new HashSet<>();
 			NBTUtil.readBlockPosList(listNBT, blockPosSet);

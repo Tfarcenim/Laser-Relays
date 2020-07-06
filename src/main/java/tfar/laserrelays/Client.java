@@ -54,22 +54,22 @@ public class Client extends RenderState {
 
 			if (items && state.get(NodeBlock.ITEM)) {
 				for (BlockPos pos : terminalBlockEntity.connections.get(NodeType.ITEM)) {
-					renderline(0, stack,builder, terminalBlockEntity, pos, NodeType.ITEM);
+					renderline(stack,builder, terminalBlockEntity, pos, NodeType.ITEM);
 				}
 			}
 			if (fluids && state.get(NodeBlock.FLUID)) {
 				for (BlockPos pos : terminalBlockEntity.connections.get(NodeType.FLUID)) {
-					renderline(0, stack, builder, terminalBlockEntity, pos, NodeType.FLUID);
+					renderline(stack, builder, terminalBlockEntity, pos, NodeType.FLUID);
 				}
 			}
 			if (energy && state.get(NodeBlock.ENERGY)) {
 				for (BlockPos pos : terminalBlockEntity.connections.get(NodeType.ENERGY)) {
-					renderline(0, stack, builder, terminalBlockEntity, pos, NodeType.ENERGY);
+					renderline(stack, builder, terminalBlockEntity, pos, NodeType.ENERGY);
 				}
 			}
 			if (gas && state.get(NodeBlock.GAS)) {
 				for (BlockPos pos : terminalBlockEntity.connections.get(NodeType.GAS)) {
-					renderline(0, stack, builder, terminalBlockEntity, pos, NodeType.GAS);
+					renderline(stack, builder, terminalBlockEntity, pos, NodeType.GAS);
 				}
 			}
 		}
@@ -77,7 +77,7 @@ public class Client extends RenderState {
 	}
 
 
-	private static void renderline(float partialTicks, MatrixStack matrices, IVertexBuilder bufferIn, NodeBlockEntity nodeBlockEntity, BlockPos to, NodeType nodeType) {
+	private static void renderline(MatrixStack matrices, IVertexBuilder bufferIn, NodeBlockEntity nodeBlockEntity, BlockPos to, NodeType nodeType) {
 
 		float red = nodeType == NodeType.ENERGY || nodeType == NodeType.GAS ? 1 : 0;
 		float green = nodeType == NodeType.ITEM || nodeType == NodeType.GAS ? 1 : 0;
@@ -88,27 +88,32 @@ public class Client extends RenderState {
 		BlockState stateFrom = nodeBlockEntity.getBlockState();
 		BlockState stateTo = Minecraft.getInstance().world.getBlockState(to);
 
-		double x1 = from.getX() + getXOffSet(stateFrom.get(NodeBlock.FACING),nodeType);
-		double y1 = from.getY() + getYOffSet(stateFrom.get(NodeBlock.FACING),nodeType);
-		double z1 = from.getZ() + getZOffSet(stateFrom.get(NodeBlock.FACING),nodeType);
+		if (stateTo.getBlock() instanceof NodeBlock) {
 
-		double x2 = to.getX() + getXOffSet(stateTo.get(NodeBlock.FACING),nodeType);
-		double y2 = to.getY() + getYOffSet(stateTo.get(NodeBlock.FACING),nodeType);
-		double z2 = to.getZ() + getZOffSet(stateTo.get(NodeBlock.FACING),nodeType);
+			double x1 = from.getX() + getXOffSet(stateFrom.get(NodeBlock.FACING), nodeType);
+			double y1 = from.getY() + getYOffSet(stateFrom.get(NodeBlock.FACING), nodeType);
+			double z1 = from.getZ() + getZOffSet(stateFrom.get(NodeBlock.FACING), nodeType);
 
-		Matrix4f matrix4f = matrices.getLast().getMatrix();
-		bufferIn.pos(matrix4f, (float)x1, (float)y1, (float)z1).color(red, green, blue, alpha).endVertex();
-		bufferIn.pos(matrix4f,(float)x2, (float)y2, (float)z2).color(red, green, blue, alpha).endVertex();
+			double x2 = to.getX() + getXOffSet(stateTo.get(NodeBlock.FACING), nodeType);
+			double y2 = to.getY() + getYOffSet(stateTo.get(NodeBlock.FACING), nodeType);
+			double z2 = to.getZ() + getZOffSet(stateTo.get(NodeBlock.FACING), nodeType);
+
+			Matrix4f matrix4f = matrices.getLast().getMatrix();
+			bufferIn.pos(matrix4f, (float) x1, (float) y1, (float) z1).color(red, green, blue, alpha).endVertex();
+			bufferIn.pos(matrix4f, (float) x2, (float) y2, (float) z2).color(red, green, blue, alpha).endVertex();
+		}
 	}
 
 	public static double getXOffSet(Direction direction, NodeType nodeType) {
 		switch (direction) {
 			case UP:
 				switch (nodeType){
-					case ITEM:return .25;
-					case FLUID:return .75;
-					case GAS:return .75;
-					case ENERGY:return .25;
+					case ITEM:
+					case ENERGY:
+						return .25;
+					case FLUID:
+					case GAS:
+						return .75;
 				}
 			case DOWN:
 				switch (nodeType){
@@ -127,7 +132,7 @@ public class Client extends RenderState {
 			case EAST:
 			case WEST:return .5;
 			case SOUTH:
-				switch (nodeType){
+				switch (nodeType) {
 					case ITEM:
 					case FLUID:
 					case GAS:
@@ -152,10 +157,12 @@ public class Client extends RenderState {
 				}
 			case EAST:
 				switch (nodeType){
-					case ITEM:return .25;
+					case ITEM:
 					case FLUID:
+						return .25;
 					case GAS:
-					case ENERGY:return .75;
+					case ENERGY:
+						return .75;
 				}
 			case SOUTH:
 				switch (nodeType){
@@ -166,10 +173,12 @@ public class Client extends RenderState {
 				}
 			case WEST:
 				switch (nodeType){
-					case ITEM:return .25;
+					case ITEM:
 					case FLUID:
+						return .25;
 					case GAS:
-					case ENERGY:return .75;
+					case ENERGY:
+						return .75;
 				}
 		}
 		return 0;
@@ -200,10 +209,12 @@ public class Client extends RenderState {
 				}
 			case EAST:
 				switch (nodeType){
-					case ITEM:return .25;
+					case ITEM:
+					case ENERGY:
+						return .25;
 					case FLUID:
 					case GAS:
-					case ENERGY:
+						return .75;
 				}
 			case SOUTH:
 				switch (nodeType){
@@ -214,10 +225,12 @@ public class Client extends RenderState {
 				}
 			case WEST:
 				switch (nodeType){
-					case ITEM:return .75;
+					case ITEM:
+					case ENERGY:
+						return .75;
 					case FLUID:
 					case GAS:
-					case ENERGY:return .75;
+						return .25;
 				}
 		}
 		return 0;
