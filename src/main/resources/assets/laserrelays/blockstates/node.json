@@ -6,7 +6,7 @@
         "facing": "up"
       },
       "apply": {
-        "model": "universalwires:block/item_node",
+        "model": "laserrelays:block/item_node",
         "uvlock": false
       }
     },
@@ -17,7 +17,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/fluid_node",
+        "model": "laserrelays:block/fluid_node",
         "uvlock": false
       }
     },
@@ -28,7 +28,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/energy_node",
+        "model": "laserrelays:block/energy_node",
         "uvlock": false
       }
     },
@@ -38,7 +38,7 @@
         "facing": "up"
       },
       "apply": {
-        "model": "universalwires:block/gas_node",
+        "model": "laserrelays:block/gas_node",
         "uvlock": false
       }
     },
@@ -49,7 +49,7 @@
         "facing": "up"
       },
       "apply": {
-        "model": "universalwires:block/item_node",
+        "model": "laserrelays:block/item_node",
         "uvlock": false
       }
     },
@@ -60,7 +60,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/fluid_node",
+        "model": "laserrelays:block/fluid_node",
         "uvlock": false
       }
     },
@@ -71,7 +71,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/energy_node",
+        "model": "laserrelays:block/energy_node",
         "uvlock": false
       }
     },
@@ -81,7 +81,7 @@
         "facing": "up"
       },
       "apply": {
-        "model": "universalwires:block/gas_node",
+        "model": "laserrelays:block/gas_node",
         "uvlock": false
       }
     },
@@ -92,7 +92,7 @@
         "facing": "down"
       },
       "apply": {
-        "model": "universalwires:block/item_node","x": 180,
+        "model": "laserrelays:block/item_node","x": 180,
         "uvlock": false
       }
     },
@@ -103,7 +103,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/fluid_node","x": 180,
+        "model": "laserrelays:block/fluid_node","x": 180,
         "uvlock": false
       }
     },
@@ -114,7 +114,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/energy_node","x": 180,
+        "model": "laserrelays:block/energy_node","x": 180,
         "uvlock": false
       }
     },
@@ -124,7 +124,7 @@
         "facing": "down"
       },
       "apply": {
-        "model": "universalwires:block/gas_node","x": 180,
+        "model": "laserrelays:block/gas_node","x": 180,
         "uvlock": false
       }
     },
@@ -135,7 +135,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "universalwires:block/item_node","x": 90,
+        "model": "laserrelays:block/item_node","x": 90,
         "uvlock": false
       }
     },
@@ -146,7 +146,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/fluid_node","x": 90,
+        "model": "laserrelays:block/fluid_node","x": 90,
         "uvlock": false
       }
     },
@@ -157,7 +157,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/energy_node","x": 90,
+        "model": "laserrelays:block/energy_node","x": 90,
         "uvlock": false
       }
     },
@@ -167,7 +167,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "universalwires:block/gas_node","x": 90,
+        "model": "laserrelays:block/gas_node","x": 90,
         "uvlock": false
       }
     },
@@ -178,7 +178,7 @@
         "facing": "south"
       },
       "apply": {
-        "model": "universalwires:block/item_node","x": 90, "y": 180,
+        "model": "laserrelays:block/item_node","x": 90, "y": 180,
         "uvlock": false
       }
     },
@@ -189,7 +189,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/fluid_node","x": 90, "y": 180,
+        "model": "laserrelays:block/fluid_node","x": 90, "y": 180,
         "uvlock": false
       }
     },
@@ -200,7 +200,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/energy_node","x": 90, "y": 180,
+        "model": "laserrelays:block/energy_node","x": 90, "y": 180,
         "uvlock": false
       }
     },
@@ -210,7 +210,7 @@
         "facing": "south"
       },
       "apply": {
-        "model": "universalwires:block/gas_node","x": 90, "y": 180,
+        "model": "laserrelays:block/gas_node","x": 90, "y": 180,
         "uvlock": false
       }
     },
@@ -221,7 +221,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "universalwires:block/item_node", "x": 90, "y": 90,
+        "model": "laserrelays:block/item_node", "x": 90, "y": 90,
         "uvlock": false
       }
     },
@@ -232,7 +232,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/fluid_node", "x": 90, "y": 90,
+        "model": "laserrelays:block/fluid_node", "x": 90, "y": 90,
         "uvlock": false
       }
     },
@@ -243,7 +243,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/energy_node", "x": 90, "y": 90,
+        "model": "laserrelays:block/energy_node", "x": 90, "y": 90,
         "uvlock": false
       }
     },
@@ -253,7 +253,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "universalwires:block/gas_node", "x": 90, "y": 90,
+        "model": "laserrelays:block/gas_node", "x": 90, "y": 90,
         "uvlock": false
       }
     },
@@ -264,7 +264,7 @@
         "facing": "west"
       },
       "apply": {
-        "model": "universalwires:block/item_node","x": 90, "y" : 270,
+        "model": "laserrelays:block/item_node","x": 90, "y" : 270,
         "uvlock": false
       }
     },
@@ -275,7 +275,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/fluid_node","x": 90, "y" : 270,
+        "model": "laserrelays:block/fluid_node","x": 90, "y" : 270,
         "uvlock": false
       }
     },
@@ -286,7 +286,7 @@
 
       },
       "apply": {
-        "model": "universalwires:block/energy_node","x": 90, "y" : 270,
+        "model": "laserrelays:block/energy_node","x": 90, "y" : 270,
         "uvlock": false
       }
     },
@@ -296,7 +296,7 @@
         "facing": "west"
       },
       "apply": {
-        "model": "universalwires:block/gas_node","x": 90, "y" : 270,
+        "model": "laserrelays:block/gas_node","x": 90, "y" : 270,
         "uvlock": false
       }
     }

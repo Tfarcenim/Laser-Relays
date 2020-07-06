@@ -1,4 +1,4 @@
-package tfar.universalwires;
+package tfar.laserrelays;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -26,9 +26,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 public class ExampleMod {
     // Directly reference a log4j logger.
 
-    public static final String MODID = "universalwires";
-
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final String MODID = "laserrelays";
 
     public static Block node;
 
@@ -83,7 +81,7 @@ public class ExampleMod {
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         EVENT_BUS.addListener(Client::render);
-        RenderTypeLookup.setRenderLayer(node, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(node, RenderType.getTranslucent());
     }
 
     private static <T extends IForgeRegistryEntry<T>> T register(T obj, String name, IForgeRegistry<T> registry) {

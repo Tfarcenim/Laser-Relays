@@ -1,4 +1,4 @@
-package tfar.universalwires;
+package tfar.laserrelays;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -9,7 +9,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -19,10 +18,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -70,7 +69,7 @@ public class NodeBlock extends Block {
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult p_225533_6_) {
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult result) {
 
 		ItemStack stack = player.getHeldItem(handIn);
 		if (!worldIn.isRemote) {
@@ -81,7 +80,7 @@ public class NodeBlock extends Block {
 
 					BlockPos other = NBTUtil.readBlockPos(stack.getTag());
 					if (pos.equals(other)){
-						player.sendMessage(new StringTextComponent("cannot connect a node to itself"));
+						player.sendMessage(new StringTextComponent("cannot connect a node to itself"),player.getUniqueID());
 					} else {
 
 						NodeBlockEntity thisTerminal = (NodeBlockEntity) worldIn.getTileEntity(pos);
@@ -92,12 +91,12 @@ public class NodeBlock extends Block {
 						stack.setTag(null);
 					}
 				} else {
-					NodeType nodeType = getNodeFromTrace(p_225533_6_,state.get(FACING));
+					NodeType nodeType = getNodeFromTrace(result,state.get(FACING));
 					NBTUtil.writeBlockPos(stack.getOrCreateTag(), pos);
 					stack.getTag().putString("node_type",nodeType.toString());
 				}
 			} else if (player.getHeldItem(handIn).isEmpty()) {
-				NodeType nodeType = getNodeFromTrace(p_225533_6_,state.get(FACING));
+				NodeType nodeType = getNodeFromTrace(result,state.get(FACING));
 				switch (nodeType) {
 					case ITEM:worldIn.setBlockState(pos,state.with(ITEM_INPUT,!state.get(ITEM_INPUT)));break;
 					case FLUID:worldIn.setBlockState(pos,state.with(FLUID_INPUT,!state.get(FLUID_INPUT)));break;
@@ -116,9 +115,9 @@ public class NodeBlock extends Block {
 
 	public static NodeType getNodeFromTrace(BlockRayTraceResult result,Direction stateFacing){
 
-		Vec3d hitVec = result.getHitVec();
+		Vector3d hitVec = result.getHitVec();
 
-		Vec3d frac = new Vec3d(trim(hitVec.x),trim(hitVec.y),trim(hitVec.z));
+		Vector3d frac = new Vector3d(trim(hitVec.x),trim(hitVec.y),trim(hitVec.z));
 
 		switch (stateFacing){
 			case WEST:

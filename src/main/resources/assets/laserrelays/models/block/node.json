@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"parent" : "block/block",
 	"textures": {
-		"2": "universalwires:block/red_node",
-		"particle": "universalwires:block/green_node"
+		"2": "laserrelays:block/red_node",
+		"particle": "laserrelays:block/green_node"
 	},
 	"elements": [
 		{

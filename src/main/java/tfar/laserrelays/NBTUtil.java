@@ -1,4 +1,4 @@
-package tfar.universalwires;
+package tfar.laserrelays;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;

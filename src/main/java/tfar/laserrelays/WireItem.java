@@ -1,4 +1,4 @@
-package tfar.universalwires;
+package tfar.laserrelays;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;

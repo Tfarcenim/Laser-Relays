@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "universalwires:block/red_node"
+    "layer0": "laserrelays:block/red_node"
   }
 }

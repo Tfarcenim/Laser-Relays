@@ -1,12 +1,13 @@
-package tfar.universalwires;
+package tfar.laserrelays;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.BlockNamedItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-public class NodeBlockItem extends BlockItem {
+public class NodeBlockItem extends BlockNamedItem {
 
 	public final NodeType nodeType;
 

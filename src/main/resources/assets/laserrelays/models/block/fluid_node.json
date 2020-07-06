@@ -3,8 +3,8 @@
 	"parent" : "block/block",
 
 	"textures": {
-		"1": "universalwires:block/blue_node",
-		"particle": "universalwires:block/green_node"
+		"1": "laserrelays:block/blue_node",
+		"particle": "laserrelays:block/green_node"
 	},
 	"elements": [
 		{

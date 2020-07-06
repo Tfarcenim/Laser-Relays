@@ -1,9 +1,5 @@
-package tfar.universalwires;
+package tfar.laserrelays;
 
-import mekanism.api.Action;
-import mekanism.api.chemical.gas.GasStack;
-import mekanism.api.chemical.gas.IGasHandler;
-import mekanism.common.capabilities.Capabilities;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -59,8 +55,8 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 	}
 
 	@Override
-	public void read(CompoundNBT compound) {
-		super.read(compound);
+	public void func_230337_a_(BlockState state,CompoundNBT compound) {
+		super.func_230337_a_(state,compound);
 		CompoundNBT nbt = compound.getCompound(NBTUtil.CONNECTIONS);
 		for (NodeType nodeType : NodeType.values()) {
 			ListNBT listNBT = nbt.getList(nodeType.toString(), Constants.NBT.TAG_COMPOUND);
@@ -102,7 +98,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 
 	@Override
 	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
-		this.read(packet.getNbtCompound());
+		this.func_230337_a_(null,packet.getNbtCompound());
 	}
 
 	@Override
@@ -209,7 +205,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 			if (state.get(NodeBlock.GAS) && state.get(NodeBlock.GAS_INPUT)) {
 				Direction dir1 = state.get(NodeBlock.FACING);
 				TileEntity inputTileEntity = world.getTileEntity(pos.offset(dir1.getOpposite()));
-				if (inputTileEntity != null) {
+				if (inputTileEntity != null) {/*
 					inputTileEntity.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, dir1).ifPresent(iGasHandler -> {
 						GasStack gasStack = iGasHandler.extractGas(Integer.MAX_VALUE, Action.SIMULATE);
 						if (!gasStack.isEmpty()) {
@@ -235,7 +231,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 								}
 							}
 						}
-					});
+					});*/
 				}
 			}
 		}

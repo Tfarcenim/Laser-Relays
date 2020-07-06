@@ -1,18 +1,18 @@
-package tfar.universalwires;
+package tfar.laserrelays;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.util.List;
@@ -25,7 +25,8 @@ public class Client extends RenderState {
 		super(nameIn, setupTaskIn, clearTaskIn);
 	}
 
-	public static final RenderType LINES = RenderType.get("lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, RenderType.State.builder().line(new RenderState.LineState(OptionalDouble.of(2))).layer(PROJECTION_LAYERING).transparency(TRANSLUCENT_TRANSPARENCY).writeMask(COLOR_WRITE).build(false));
+	public static final RenderType LINES = RenderType.makeType("lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, RenderType.State.getBuilder().
+					line(new RenderState.LineState(OptionalDouble.of(2))).layer(field_239235_M_).transparency(TRANSLUCENT_TRANSPARENCY).writeMask(COLOR_WRITE).build(false));
 
 
 	public static void render(RenderWorldLastEvent e) {
@@ -36,7 +37,7 @@ public class Client extends RenderState {
 						.collect(Collectors.toList());
 
 		MatrixStack stack = e.getMatrixStack();
-		Vec3d vec3d = TileEntityRendererDispatcher.instance.renderInfo.getProjectedView();
+		Vector3d vec3d = TileEntityRendererDispatcher.instance.renderInfo.getProjectedView();
 
 		stack.translate(-vec3d.x, -vec3d.y, -vec3d.z);
 
@@ -95,7 +96,7 @@ public class Client extends RenderState {
 		double y2 = to.getY() + getYOffSet(stateTo.get(NodeBlock.FACING),nodeType);
 		double z2 = to.getZ() + getZOffSet(stateTo.get(NodeBlock.FACING),nodeType);
 
-		Matrix4f matrix4f = matrices.getLast().getPositionMatrix();
+		Matrix4f matrix4f = matrices.getLast().getMatrix();
 		bufferIn.pos(matrix4f, (float)x1, (float)y1, (float)z1).color(red, green, blue, alpha).endVertex();
 		bufferIn.pos(matrix4f,(float)x2, (float)y2, (float)z2).color(red, green, blue, alpha).endVertex();
 	}
@@ -127,10 +128,11 @@ public class Client extends RenderState {
 			case WEST:return .5;
 			case SOUTH:
 				switch (nodeType){
-					case ITEM:return .75;
+					case ITEM:
 					case FLUID:
 					case GAS:
-					case ENERGY:return .75;
+					case ENERGY:
+						return .75;
 				}
 		}
 		return 0;
