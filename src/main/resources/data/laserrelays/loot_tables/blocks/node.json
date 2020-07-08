@@ -1,0 +1,67 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "laserrelays:node",
+                  "properties": {
+                    "item": "true"
+                  }
+                }
+              ],
+              "name": "laserrelays:item_node"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "laserrelays:node",
+                  "properties": {
+                    "fluid": "true"
+                  }
+                }
+              ],
+              "name": "laserrelays:fluid_node"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "laserrelays:node",
+                  "properties": {
+                    "energy": "true"
+                  }
+                }
+              ],
+              "name": "laserrelays:energy_node"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "laserrelays:node",
+                  "properties": {
+                    "gas": "true"
+                  }
+                }
+              ],
+              "name": "laserrelays:gas_node"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

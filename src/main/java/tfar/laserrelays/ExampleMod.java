@@ -60,13 +60,13 @@ public class ExampleMod {
     private void items(final RegistryEvent.Register<Item> event) {
 
         wire = register(new WireItem(new Item.Properties().group(ItemGroup.REDSTONE)),"wire",event.getRegistry());
-        register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.ITEM),
+        item_node = register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.ITEM),
                 "item_node", event.getRegistry());
-        register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.FLUID),
+        fluid_node = register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.FLUID),
                 "fluid_node", event.getRegistry());
-        register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.ENERGY),
+        energy_node = register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.ENERGY),
                 "energy_node", event.getRegistry());
-        register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.GAS),
+        gas_node = register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.GAS),
                 "gas_node", event.getRegistry());
     }
 

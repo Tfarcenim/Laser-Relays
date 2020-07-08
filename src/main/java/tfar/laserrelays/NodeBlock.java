@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
@@ -27,6 +28,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -317,16 +319,28 @@ public class NodeBlock extends Block {
 		IWorld world = e.getWorld();
 
 		if (state.getBlock() instanceof NodeBlock) {
-			RayTraceResult result = player.pick(5, 0, false);
+			RayTraceResult result = player.pick(player.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue(), 0, false);
 			if (result instanceof BlockRayTraceResult) {
 				NodeType nodeType = getNodeFromTrace((BlockRayTraceResult)result,state.get(FACING));
 				BlockState newState = breakNode(state,nodeType);
 				if (!newState.isAir(world, pos)) {
 					world.setBlockState(pos,newState,3);
+					ItemStack stack = new ItemStack(getItemFromNode(nodeType));
+					world.addEntity(new ItemEntity((World) world,e.getPos().getX(),e.getPos().getY() + .5,e.getPos().getZ(),stack));
 					e.setCanceled(true);
 				}
 			}
 		}
+	}
+
+	public static Item getItemFromNode(NodeType node) {
+		switch (node) {
+			case ITEM:return ExampleMod.item_node;
+			case FLUID:return ExampleMod.fluid_node;
+			case ENERGY:return ExampleMod.energy_node;
+			case GAS:return ExampleMod.gas_node;
+		}
+		throw new IllegalStateException();
 	}
 
 	public static BlockState breakNode(BlockState original,NodeType nodeType) {
@@ -356,7 +370,7 @@ public class NodeBlock extends Block {
 		}
 
 		if (broken) {
-			return Blocks.AIR.getDefaultState();//world.destroyBlock(pos,true);
+			return Blocks.AIR.getDefaultState();
 		} else {
 			return newState;
 		}
