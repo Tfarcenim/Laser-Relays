@@ -115,8 +115,8 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 		if (!connections.isEmpty() && world.getGameTime() % 5 == 0 && !world.isRemote) {
 			BlockState state = getBlockState();
 			if (state.get(NodeBlock.ITEM) && state.get(NodeBlock.ITEM_INPUT)) {
-				Direction dir1 = state.get(NodeBlock.FACING).getOpposite();
-				TileEntity inputTileEntity = world.getTileEntity(pos.offset(dir1));
+				Direction dir1 = state.get(NodeBlock.FACING);
+				TileEntity inputTileEntity = world.getTileEntity(pos.offset(dir1.getOpposite()));
 				if (inputTileEntity != null) {
 					inputTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir1).ifPresent(itemHandler -> {
 						for (int i = 0; i < itemHandler.getSlots(); i++) {

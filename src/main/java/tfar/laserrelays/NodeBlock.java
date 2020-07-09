@@ -117,11 +117,8 @@ public class NodeBlock extends Block {
 		return a - Math.floor(a);
 	}
 
-	public static NodeType getNodeFromTrace(BlockRayTraceResult result,Direction stateFacing){
-
-		Vector3d hitVec = result.getHitVec();
-
-		Vector3d frac = new Vector3d(trim(hitVec.x),trim(hitVec.y),trim(hitVec.z));
+	public static NodeType getNodeFromTrace(Vector3d hit,Direction stateFacing) {
+		Vector3d frac = new Vector3d(trim(hit.x),trim(hit.y),trim(hit.z));
 
 		switch (stateFacing){
 			case WEST:
@@ -164,6 +161,11 @@ public class NodeBlock extends Block {
 		}
 		System.out.println("miss");
 		return NodeType.ITEM;
+	}
+
+		public static NodeType getNodeFromTrace(BlockRayTraceResult result,Direction stateFacing){
+		Vector3d hitVec = result.getHitVec();
+		return getNodeFromTrace(hitVec,stateFacing);
 	}
 
 	@Override

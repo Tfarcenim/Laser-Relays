@@ -2,12 +2,17 @@ package tfar.laserrelays;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GrassColors;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +36,7 @@ public class ExampleMod {
     public static Block node;
 
     public static Item wire;
+    public static Item color_filter;
 
     public static Item item_node;
     public static Item fluid_node;
@@ -52,6 +58,8 @@ public class ExampleMod {
         EVENT_BUS.addListener(NodeBlock::replace);
     }
 
+
+
     private void blocks(final RegistryEvent.Register<Block> event) {
         node = register(new NodeBlock(Block.Properties.from(Blocks.DAYLIGHT_DETECTOR).doesNotBlockMovement()),"node",event.getRegistry());
     }
@@ -60,6 +68,7 @@ public class ExampleMod {
     private void items(final RegistryEvent.Register<Item> event) {
 
         wire = register(new WireItem(new Item.Properties().group(ItemGroup.REDSTONE)),"wire",event.getRegistry());
+        color_filter = register(new ColorFilterItem(new Item.Properties().group(ItemGroup.REDSTONE)),"color_filter",event.getRegistry());
         item_node = register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.ITEM),
                 "item_node", event.getRegistry());
         fluid_node = register(new NodeBlockItem(node,new Item.Properties().group(ItemGroup.REDSTONE),NodeType.FLUID),
@@ -81,7 +90,18 @@ public class ExampleMod {
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         EVENT_BUS.addListener(Client::render);
+        EVENT_BUS.addListener(Client::scroll);
         RenderTypeLookup.setRenderLayer(node, RenderType.getTranslucent());
+        Minecraft.getInstance().getItemColors().register(ExampleMod::getNodeColor, wire,color_filter);
+    }
+
+    public static int getNodeColor(ItemStack stack,int i) {
+        CompoundNBT nbt = stack.getTag();
+        if (nbt != null && nbt.contains("node_type")) {
+            NodeType nodeType = NodeType.valueOf(stack.getTag().getString("node_type"));
+            return nodeType.color;
+        }
+        return 0xffffff;
     }
 
     private static <T extends IForgeRegistryEntry<T>> T register(T obj, String name, IForgeRegistry<T> registry) {
