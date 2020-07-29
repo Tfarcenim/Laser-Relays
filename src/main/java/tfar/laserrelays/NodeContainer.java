@@ -106,7 +106,7 @@ public class NodeContainer extends Container {
 						if (slot8 != null && canAddItemToSlot(slot8, mouseStack, true) && slot8.isItemValid(mouseStack) && (this.dragMode == 2 || mouseStack.getCount() >= this.dragSlots.size()) && this.canDragIntoSlot(slot8)) {
 							ItemStack mouseStackCopyCopy = mouseStackCopy.copy();
 							int j3 = slot8.getHasStack() ? slot8.getStack().getCount() : 0;
-							$computeStackSize(this.dragSlots, this.dragMode, mouseStackCopyCopy, j3);
+							computeStackSize(this.dragSlots, this.dragMode, mouseStackCopyCopy, j3);
 							int k3 = Math.min(mouseStackCopyCopy.getMaxStackSize(), slot8.getItemStackLimit(mouseStackCopyCopy));
 							if (mouseStackCopyCopy.getCount() > k3) {
 								mouseStackCopyCopy.setCount(k3);
@@ -341,25 +341,6 @@ public class NodeContainer extends Container {
 		}
 
 		return itemstack;
-	}
-
-	/**
-	 * Compute the new stack size, Returns the stack with the new size. Args : dragSlots, dragMode, dragStack,
-	 * slotStackSize
-	 */
-	public static void $computeStackSize(Set<Slot> dragSlotsIn, int dragModeIn, ItemStack stack, int slotStackSize) {
-		switch (dragModeIn) {
-			case 0:
-				stack.setCount(MathHelper.floor((float) stack.getCount() / (float) dragSlotsIn.size()));
-				break;
-			case 1:
-				stack.setCount(1);
-				break;
-			case 2:
-				stack.setCount(stack.getMaxStackSize());
-		}
-
-		stack.grow(slotStackSize);
 	}
 
 	@Override

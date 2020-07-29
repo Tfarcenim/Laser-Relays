@@ -42,7 +42,7 @@ public class NodeScreen extends ContainerScreen<NodeContainer> {
 		this.func_230459_a_(matrixStack, mouseX, mouseY);
 	}
 
-	//should actually be called drawStackInSlot
+	//should actually be called drawSlot
 	public void moveItems(MatrixStack matrixStack, Slot slot) {
 
 		if (slot instanceof FilterSlot) {
@@ -83,7 +83,7 @@ public class NodeScreen extends ContainerScreen<NodeContainer> {
 				if (Container.canAddItemToSlot(slot, itemstack1, true) && this.container.canDragIntoSlot(slot)) {
 					itemstack = itemstack1.copy();
 					flag = true;
-					NodeContainer.$computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack, slot.getStack().isEmpty() ? 0 : slot.getStack().getCount());
+					Container.computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack, slot.getStack().isEmpty() ? 0 : slot.getStack().getCount());
 					int k = Math.min(itemstack.getMaxStackSize(), slot.getItemStackLimit(itemstack));
 					if (itemstack.getCount() > k) {
 						s = TextFormatting.YELLOW.toString() + k;
@@ -119,31 +119,6 @@ public class NodeScreen extends ContainerScreen<NodeContainer> {
 
 			this.itemRenderer.zLevel = 0.0F;
 			this.setBlitOffset(0);
-		}
-	}
-
-	public void updateDragSplitting() {
-		ItemStack itemstack = this.minecraft.player.inventory.getItemStack();
-		if (!itemstack.isEmpty() && this.dragSplitting) {
-			if (this.dragSplittingLimit == 2) {
-				this.dragSplittingRemnant = itemstack.getMaxStackSize();
-			} else {
-				this.dragSplittingRemnant = itemstack.getCount();
-
-				for(Slot slot : this.dragSplittingSlots) {
-					ItemStack itemstack1 = itemstack.copy();
-					ItemStack itemstack2 = slot.getStack();
-					int i = itemstack2.isEmpty() ? 0 : itemstack2.getCount();
-					NodeContainer.$computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack1, i);
-					int j = Math.min(itemstack1.getMaxStackSize(), slot.getItemStackLimit(itemstack1));
-					if (itemstack1.getCount() > j) {
-						itemstack1.setCount(j);
-					}
-
-					this.dragSplittingRemnant -= itemstack1.getCount() - i;
-				}
-
-			}
 		}
 	}
 
