@@ -4,5 +4,6 @@
   "item.laserrelays.energy_node" : "Energy Node",
   "item.laserrelays.gas_node" : "Gas Node",
   "item.laserrelays.wire" : "Wire",
+  "item.laserrelays.wire_cutters" : "Wire Cutters",
   "item.laserrelays.color_filter" : "Color Filter"
 }

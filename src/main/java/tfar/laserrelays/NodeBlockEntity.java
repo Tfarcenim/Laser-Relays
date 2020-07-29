@@ -1,6 +1,13 @@
 package tfar.laserrelays;
 
+import mekanism.api.Action;
+import mekanism.api.chemical.gas.GasStack;
+import mekanism.api.chemical.gas.IGasHandler;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -10,6 +17,8 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -18,21 +27,32 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
+public class NodeBlockEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
 
 	protected Map<NodeType, Set<BlockPos>> connections = new EnumMap<>(NodeType.class);
 
-	public int max_slots = 27;
+	protected HashSet<NodeType> whitelist = new HashSet<>();
+
+	public FilterItemStackHandler filter = new FilterItemStackHandler(9) {
+		@Override
+		protected void onContentsChanged(int slot) {
+			super.onContentsChanged(slot);
+			markDirty();
+		}
+	};
+
+	public int max_slots = 9;
 
 	public int index = 0;
+	public int lastIndex = 0;
+
+	int tick_rate = 5;
 
 	public NodeBlockEntity() {
 		super(ExampleMod.BLOCK_ENTITY);
@@ -48,7 +68,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 		}
 	}
 
-	public void disconnect(BlockPos other,NodeType node) {
+	public void disconnect(BlockPos other, NodeType node) {
 		if (connections.get(node).contains(other)) {
 			connections.get(node).remove(other);
 			markDirty();
@@ -63,8 +83,8 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 	}
 
 	@Override
-	public void func_230337_a_(BlockState state,CompoundNBT compound) {
-		super.func_230337_a_(state,compound);
+	public void read(BlockState state, CompoundNBT compound) {
+		super.read(state, compound);
 		CompoundNBT nbt = compound.getCompound(NBTUtil.CONNECTIONS);
 		for (NodeType nodeType : NodeType.values()) {
 			connections.get(nodeType).clear();
@@ -73,6 +93,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 			NBTUtil.readBlockPosList(listNBT, blockPosSet);
 			connections.get(nodeType).addAll(blockPosSet);
 		}
+		filter.deserializeNBT(compound.getCompound("filter"));
 	}
 
 	@Override
@@ -90,6 +111,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 			NBTUtil.writeBlockPosList(listNBT, posSet);
 			compound1.put(nodeType.toString(), listNBT);
 		}
+		compound.put("filter",filter.serializeNBT());
 		compound.put(NBTUtil.CONNECTIONS, compound1);
 		return super.write(compound);
 	}
@@ -107,7 +129,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 
 	@Override
 	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
-		this.func_230337_a_(null,packet.getNbtCompound());
+		this.read(null, packet.getNbtCompound());
 	}
 
 	@Override
@@ -115,43 +137,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 		if (!connections.isEmpty() && world.getGameTime() % 5 == 0 && !world.isRemote) {
 			BlockState state = getBlockState();
 			if (state.get(NodeBlock.ITEM) && state.get(NodeBlock.ITEM_INPUT)) {
-				Direction dir1 = state.get(NodeBlock.FACING);
-				TileEntity inputTileEntity = world.getTileEntity(pos.offset(dir1.getOpposite()));
-				if (inputTileEntity != null) {
-					inputTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir1).ifPresent(itemHandler -> {
-						for (int i = 0; i < itemHandler.getSlots(); i++) {
-							ItemStack testStack = itemHandler.extractItem(i, Integer.MAX_VALUE, true);
-							if (!testStack.isEmpty()) {
-								ItemStack remainder = testStack.copy();
-								for (BlockPos pos1 : connections.get(NodeType.ITEM)) {
-									BlockState otherNodeState = world.getBlockState(pos1);
-									if (otherNodeState.getBlock() instanceof NodeBlock &&
-													!otherNodeState.get(NodeBlock.ITEM_INPUT)) {
-										Direction dir2 = otherNodeState.get(NodeBlock.FACING).getOpposite();
-										TileEntity outputTileEntity = world.getTileEntity(pos1.offset(dir2));
-										if (outputTileEntity != null) {
-											IItemHandler output = outputTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir2.getOpposite()).orElse(null);
-											for (int j = 0; j < output.getSlots(); j++) {
-												ItemStack inserted = output.insertItem(j, remainder, false);
-												if (inserted.isEmpty()) {
-													int countInserted = remainder.getCount();
-													itemHandler.extractItem(i, countInserted, false);
-													break;
-												}
-												if (inserted.getCount() < remainder.getCount()) {
-													int countInserted = remainder.getCount() - inserted.getCount();
-													remainder.shrink(countInserted);
-													itemHandler.extractItem(i, countInserted, false);
-												}
-											}
-											if (remainder.isEmpty()) break;
-										}
-									}
-								}
-							}
-						}
-					});
-				}
+				tickItems(state);
 			}
 			if (state.get(NodeBlock.FLUID) && state.get(NodeBlock.FLUID_INPUT)) {
 				Direction dir1 = state.get(NodeBlock.FACING).getOpposite();
@@ -162,7 +148,7 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 						FluidStack testFluid = iFluidHandler1.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE);
 						if (!testFluid.isEmpty()) {
 							for (BlockPos pos1 : connections.get(NodeType.FLUID)) {
-								if (testFluid.isEmpty())break;
+								if (testFluid.isEmpty()) break;
 								BlockState otherNodeState = world.getBlockState(pos1);
 								if (otherNodeState.getBlock() instanceof NodeBlock &&
 												!otherNodeState.get(NodeBlock.FLUID_INPUT)) {
@@ -214,9 +200,9 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 			if (state.get(NodeBlock.GAS) && state.get(NodeBlock.GAS_INPUT)) {
 				Direction dir1 = state.get(NodeBlock.FACING);
 				TileEntity inputTileEntity = world.getTileEntity(pos.offset(dir1.getOpposite()));
-				if (inputTileEntity != null) {/*
-					inputTileEntity.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, dir1).ifPresent(iGasHandler -> {
-						GasStack gasStack = iGasHandler.extractGas(Integer.MAX_VALUE, Action.SIMULATE);
+				if (inputTileEntity != null) {
+					inputTileEntity.getCapability(ExampleMod.GAS_HANDLER_CAPABILITY, dir1).ifPresent(iGasHandler -> {
+						GasStack gasStack = iGasHandler.extractChemical(Integer.MAX_VALUE, Action.SIMULATE);
 						if (!gasStack.isEmpty()) {
 							for (BlockPos pos1 : connections.get(NodeType.GAS)) {
 								BlockState otherNodeState = world.getBlockState(pos1);
@@ -225,25 +211,92 @@ public class NodeBlockEntity extends TileEntity implements ITickableTileEntity {
 									Direction dir2 = otherNodeState.get(NodeBlock.FACING);
 									TileEntity outputTileEntity = world.getTileEntity(pos1.offset(dir2.getOpposite()));
 									if (outputTileEntity != null) {
-										IGasHandler output = outputTileEntity.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, dir2).orElse(null);
-										if (output != null){
-										GasStack accepted = output.insertGas(gasStack, Action.EXECUTE);
-										if (accepted.isEmpty()) {
-											iGasHandler.extractGas(accepted.getAmount(), Action.EXECUTE);break;
-										} else if (gasStack.getAmount() < accepted.getAmount()) {
-											long amountAccepted = gasStack.getAmount() - accepted.getAmount();
-											iGasHandler.extractGas(amountAccepted, Action.EXECUTE);
-											gasStack.shrink(amountAccepted);
-										}
+										IGasHandler output = outputTileEntity.getCapability(ExampleMod.GAS_HANDLER_CAPABILITY, dir2).orElse(null);
+										if (output != null) {
+											GasStack accepted = output.insertChemical(gasStack, Action.EXECUTE);
+											//accepted all
+											if (accepted.isEmpty()) {
+												iGasHandler.extractChemical(gasStack.getAmount(), Action.EXECUTE);
+												break;
+											} else if (gasStack.getAmount() < accepted.getAmount()) {
+												long amountAccepted = gasStack.getAmount() - accepted.getAmount();
+												iGasHandler.extractChemical(amountAccepted, Action.EXECUTE);
+												gasStack.shrink(amountAccepted);
+											}
 										}
 									}
 								}
 							}
 						}
-					});*/
+					});
 				}
 			}
 		}
+	}
+
+	public void tickItems(BlockState state) {
+		Direction dir1 = state.get(NodeBlock.FACING);
+		TileEntity inputTileEntity = world.getTileEntity(pos.offset(dir1.getOpposite()));
+		if (inputTileEntity != null) {
+			inputTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir1).ifPresent(itemHandler -> {
+				int slots = itemHandler.getSlots();
+				int j = lastIndex;
+				int toScan = Math.min(max_slots,slots);
+				for (int i = 0; i < toScan; i++) {
+					if (j >= slots) {
+						j = 0;
+					}
+					ItemStack testStack = itemHandler.extractItem(j, Integer.MAX_VALUE, true);
+					if (!testStack.isEmpty() && checkInputFilter(testStack)) {
+						ItemStack remainder = testStack.copy();
+						for (BlockPos pos1 : connections.get(NodeType.ITEM)) {
+							BlockState otherNodeState = world.getBlockState(pos1);
+							if (otherNodeState.getBlock() instanceof NodeBlock &&
+											!otherNodeState.get(NodeBlock.ITEM_INPUT)) {
+								Direction dir2 = otherNodeState.get(NodeBlock.FACING).getOpposite();
+								TileEntity outputTileEntity = world.getTileEntity(pos1.offset(dir2));
+								if (outputTileEntity != null) {
+									IItemHandler output = outputTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir2.getOpposite()).orElse(null);
+									if (output != null) {
+										for (int k = 0; k < output.getSlots(); k++) {
+											ItemStack inserted = output.insertItem(k, remainder, false);
+											if (inserted.isEmpty()) {
+												int countInserted = remainder.getCount();
+												itemHandler.extractItem(j, countInserted, false);
+												break;
+											}
+											if (inserted.getCount() < remainder.getCount()) {
+												int countInserted = remainder.getCount() - inserted.getCount();
+												remainder.shrink(countInserted);
+												itemHandler.extractItem(j, countInserted, false);
+											}
+										}
+										if (remainder.isEmpty()) break;
+									}
+								}
+							}
+						}
+					}
+					j++;
+				}
+				lastIndex = j;
+			});
+		}
+	}
+
+	protected boolean checkInputFilter(ItemStack testStack) {
+		return filter.test(testStack);
+	}
+
+	@Override
+	public ITextComponent getDisplayName() {
+		return new StringTextComponent("filter");
+	}
+
+	@Nullable
+	@Override
+	public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+		return new NodeContainer(p_createMenu_1_, p_createMenu_2_, pos);
 	}
 }
 

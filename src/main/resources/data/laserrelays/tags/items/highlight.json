@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "laserrelays:wire_cutters",
+    "laserrelays:wire"
+  ]
+}

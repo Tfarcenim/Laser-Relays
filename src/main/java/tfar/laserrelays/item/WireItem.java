@@ -1,4 +1,4 @@
-package tfar.laserrelays;
+package tfar.laserrelays.item;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import tfar.laserrelays.NBTUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;

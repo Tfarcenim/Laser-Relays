@@ -1,4 +1,4 @@
-package tfar.laserrelays;
+package tfar.laserrelays.item;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -11,6 +11,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import tfar.laserrelays.NodeBlock;
+import tfar.laserrelays.NodeType;
 
 import javax.annotation.Nullable;
 import java.util.List;

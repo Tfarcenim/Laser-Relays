@@ -1,4 +1,4 @@
-package tfar.laserrelays;
+package tfar.laserrelays.item;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -6,6 +6,7 @@ import net.minecraft.item.BlockNamedItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import tfar.laserrelays.NodeType;
 
 public class NodeBlockItem extends BlockNamedItem {
 

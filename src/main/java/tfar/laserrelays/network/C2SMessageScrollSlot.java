@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import tfar.laserrelays.ColorFilterItem;
+import tfar.laserrelays.item.ColorFilterItem;
 
 import java.util.function.Supplier;
 

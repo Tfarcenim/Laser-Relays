@@ -9,32 +9,40 @@ import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import org.lwjgl.opengl.GL11;
+import tfar.laserrelays.item.ColorFilterItem;
 
-import java.awt.event.MouseWheelEvent;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
-public class Client extends RenderState {
+public class Client extends RenderType {
 
-	public Client(String nameIn, Runnable setupTaskIn, Runnable clearTaskIn) {
-		super(nameIn, setupTaskIn, clearTaskIn);
+	public static final RenderType LINES = makeType("lines", DefaultVertexFormats.POSITION_COLOR, GL11.GL_LINES, 256,
+					RenderType.State.getBuilder().line(new RenderState.LineState(OptionalDouble.of(2))).layer(field_239235_M_).transparency(TRANSLUCENT_TRANSPARENCY)
+					.target(field_241712_U_).writeMask(COLOR_DEPTH_WRITE).build(false));
+
+	public static RenderType getCubeType() {
+		RenderType.State renderTypeState = RenderType.State.getBuilder().transparency(TRANSLUCENT_TRANSPARENCY).cull(CullState.CULL_DISABLED).build(true);
+		return RenderType.makeType("cube", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL, GL11.GL_QUADS, 256, true, true, renderTypeState);
 	}
 
-	public static final RenderType LINES = RenderType.makeType("lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, RenderType.State.getBuilder().
-					line(new RenderState.LineState(OptionalDouble.of(2))).layer(field_239235_M_).transparency(TRANSLUCENT_TRANSPARENCY).writeMask(COLOR_WRITE).build(false));
-
 	public static final Minecraft mc = Minecraft.getInstance();
+
+	public Client(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
+		super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
+	}
 
 	public static void render(RenderWorldLastEvent e) {
 		List<NodeBlockEntity> blockEntities = Minecraft.getInstance().world.loadedTileEntityList
@@ -82,40 +90,65 @@ public class Client extends RenderState {
 				}
 			}
 		}
+		Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(LINES);
 
 		ItemStack stack1 = mc.player.getHeldItem(Hand.MAIN_HAND);
-		if (stack1.getItem() instanceof WireItem) {
+		if (stack1.getItem().isIn(ExampleMod.HIGHLIGHT)) {
 			if (stack1.getTag() != null && stack1.getTag().contains("node_type")) {
-				NodeBlockEntity nodeBlockEntity = ((NodeBlockEntity)mc.world.getTileEntity(NBTUtil.readBlockPos(stack1.getTag())));
-				if (nodeBlockEntity != null) {
-
+				BlockPos pos = NBTUtil.readBlockPos(stack1.getTag());
+				if (pos != null) {
+					builder = buffer.getBuffer(getCubeType());
+					renderCubeOutline(matrices,builder,pos,NodeType.valueOf(stack1.getTag().getString("node_type")).color);
+					Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(getCubeType());
 				}
 			}
 		}
-		Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(LINES);
 	}
 
-	private static void renderlineToPlayer(MatrixStack matrices, IVertexBuilder bufferIn, NodeBlockEntity nodeBlockEntity, Vector3d to, NodeType nodeType) {
-
-		float red = nodeType == NodeType.ENERGY || nodeType == NodeType.GAS ? 1 : 0;
-		float green = nodeType == NodeType.ITEM || nodeType == NodeType.GAS ? 1 : 0;
-		float blue = nodeType == NodeType.FLUID ? 1 : 0;
-		float alpha = 1;
-
-		BlockPos from = nodeBlockEntity.getPos();
-		BlockState stateFrom = nodeBlockEntity.getBlockState();
-
-		double x1 = from.getX() + getXOffSet(stateFrom.get(NodeBlock.FACING), nodeType);
-		double y1 = from.getY() + getYOffSet(stateFrom.get(NodeBlock.FACING), nodeType);
-		double z1 = from.getZ() + getZOffSet(stateFrom.get(NodeBlock.FACING), nodeType);
-
-		double x2 = to.x;
-		double y2 = to.y +1;
-		double z2 = to.z;
-
+	public static void renderCubeOutline(MatrixStack matrices,IVertexBuilder builder,BlockPos pos,int color) {
 		Matrix4f matrix4f = matrices.getLast().getMatrix();
-		bufferIn.pos(matrix4f, (float) x1, (float) y1, (float) z1).color(red, green, blue, alpha).endVertex();
-		bufferIn.pos(matrix4f, (float) x2, (float) y2, (float) z2).color(red, green, blue, alpha).endVertex();
+		int alpha = 0x80000000;
+		drawVerticalFace(builder,matrix4f,pos.getX(),1,pos.getY(),1,pos.getZ(),0,alpha | color);
+		drawVerticalFace(builder,matrix4f,pos.getX(),1,pos.getY(),1,pos.getZ() + 1,0,alpha | color);
+
+		drawVerticalFace(builder,matrix4f,pos.getX()+1,0,pos.getY(),1,pos.getZ() ,1,alpha | color);
+		drawVerticalFace(builder,matrix4f,pos.getX(),0,pos.getY(),1,pos.getZ() ,1,alpha | color);
+
+		drawHorizontalFace(builder,matrix4f,pos.getX(),1,pos.getY()+1, pos.getZ(),1,alpha | color);
+		drawHorizontalFace(builder,matrix4f,pos.getX(),1,pos.getY(), pos.getZ() ,1,alpha | color);
+
+	}
+
+	public static void drawVerticalFace(IVertexBuilder builder, Matrix4f matrix4f, float u, float width, float v, float height, float z, float depth, int aarrggbb) {
+		float a = (aarrggbb >> 24 & 0xff) / 255f;
+		float r = (aarrggbb >> 16 & 0xff) / 255f;
+		float g = (aarrggbb >> 8 & 0xff) / 255f;
+		float b = (aarrggbb & 0xff) / 255f;
+
+		drawVerticalFace(builder, matrix4f, u, width, v, height,z,depth, r, g, b, a);
+	}
+
+	public static void drawVerticalFace(IVertexBuilder builder, Matrix4f matrix4f, float x, float width, float y, float height, float z, float depth, float r, float g, float b, float a) {
+		builder.pos(matrix4f, x, y, z).tex(0.0F, 0.0F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
+		builder.pos(matrix4f, x, y + height, z).tex(0.0F, 0.5F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
+		builder.pos(matrix4f, x + width, y + height, z + depth).tex(1.0F, 0.5F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
+		builder.pos(matrix4f, x + width, y, z + depth).tex(1.0F, 0.0F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
+	}
+
+	public static void drawHorizontalFace(IVertexBuilder builder, Matrix4f matrix4f, float u, float width, float v, float z, float depth, int aarrggbb) {
+		float a = (aarrggbb >> 24 & 0xff) / 255f;
+		float r = (aarrggbb >> 16 & 0xff) / 255f;
+		float g = (aarrggbb >> 8 & 0xff) / 255f;
+		float b = (aarrggbb & 0xff) / 255f;
+
+		drawHorizontalFace(builder, matrix4f, u, width, v, z,depth, r, g, b, a);
+	}
+
+	public static void drawHorizontalFace(IVertexBuilder builder, Matrix4f matrix4f, float x, float width, float y, float z, float depth, float r, float g, float b, float a) {
+		builder.pos(matrix4f, x, y, z).tex(0.0F, 0.0F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
+		builder.pos(matrix4f, x + width, y, z).tex(0.0F, 0.5F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
+		builder.pos(matrix4f, x + width, y, z + depth).tex(1.0F, 0.0F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
+		builder.pos(matrix4f, x, y, z + depth).tex(1.0F, 0.5F).color(r, g, b, a).normal(Vector3f.YP.getX(), Vector3f.YP.getY(), Vector3f.YP.getZ()).endVertex();
 	}
 
 	private static void renderline(MatrixStack matrices, IVertexBuilder bufferIn, NodeBlockEntity nodeBlockEntity, BlockPos to, NodeType nodeType) {
