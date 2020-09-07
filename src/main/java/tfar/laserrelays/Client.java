@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 public class Client extends RenderType {
 
-	public static final RenderType LINES = makeType("lines", DefaultVertexFormats.POSITION_COLOR, GL11.GL_LINES, 256,
+	public static final RenderType LINES2 = makeType("lines", DefaultVertexFormats.POSITION_COLOR, GL11.GL_LINES, 256,
 					RenderType.State.getBuilder().line(new RenderState.LineState(OptionalDouble.of(2))).layer(field_239235_M_).transparency(TRANSLUCENT_TRANSPARENCY)
 					.target(field_241712_U_).writeMask(COLOR_DEPTH_WRITE).build(false));
 
@@ -45,7 +45,7 @@ public class Client extends RenderType {
 	}
 
 	public static void render(RenderWorldLastEvent e) {
-		List<NodeBlockEntity> blockEntities = Minecraft.getInstance().world.loadedTileEntityList
+		List<NodeBlockEntity> nodes = Minecraft.getInstance().world.loadedTileEntityList
 						.stream()
 						.filter(NodeBlockEntity.class::isInstance)
 						.map(NodeBlockEntity.class::cast)
@@ -57,9 +57,9 @@ public class Client extends RenderType {
 		matrices.translate(-vec3d.x, -vec3d.y, -vec3d.z);
 
 		IRenderTypeBuffer buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-		IVertexBuilder builder = buffer.getBuffer(LINES);
+		IVertexBuilder builder = buffer.getBuffer(LINES2);
 
-		for (NodeBlockEntity terminalBlockEntity : blockEntities) {
+		for (NodeBlockEntity terminalBlockEntity : nodes) {
 			BlockState state = terminalBlockEntity.getBlockState();
 
 			NodeType whitelistNode = NodeType.getNodeFromStack(Minecraft.getInstance().player.getHeldItem(Hand.MAIN_HAND));
@@ -90,7 +90,7 @@ public class Client extends RenderType {
 				}
 			}
 		}
-		Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(LINES);
+		Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(LINES2);
 
 		ItemStack stack1 = mc.player.getHeldItem(Hand.MAIN_HAND);
 		if (stack1.getItem().isIn(ExampleMod.HIGHLIGHT)) {

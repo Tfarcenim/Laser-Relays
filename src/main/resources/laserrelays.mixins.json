@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "tfar.laserrelays.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "laserrelays.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

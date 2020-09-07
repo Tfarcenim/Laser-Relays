@@ -8,11 +8,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.items.wrapper.InvWrapper;
-
-import java.util.Set;
 
 public class NodeContainer extends Container {
 
@@ -31,7 +27,6 @@ public class NodeContainer extends Container {
 			for (int j = 0; j < 3; j++)
 				addSlot(new FilterSlot(nodeBlockEntity.filter,
 								j + 3 * i, 62 + j * 18, 17 + i * 18));
-		InvWrapper wrapper = new InvWrapper(inv);
 
 		int playerX = 8;
 		int playerY = 84;

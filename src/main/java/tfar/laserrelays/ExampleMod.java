@@ -98,7 +98,9 @@ public class ExampleMod {
 
     private void blockentities(final RegistryEvent.Register<TileEntityType<?>> event) {
         BLOCK_ENTITY = register(
-                TileEntityType.Builder.create(NodeBlockEntity::new, node).build(null),
+                TileEntityType.Builder.create(
+                        NodeBlockEntity::new, node)
+                        .build(null),
                 "node",event.getRegistry());
     }
 
